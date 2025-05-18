@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   push:
-    branches: [ main ]      # triggers deploy after each merge
+    branches: [main]        # triggers deploy after each merge
 
 jobs:
   # ---------- Back-end build ----------
@@ -36,19 +36,19 @@ jobs:
       - run: npm run build
 
   # ---------- Deploy to VM (only on main) ----------
-    deploy:
+  deploy:
     if: github.ref == 'refs/heads/main'
-    needs: [backend, frontend]
+    needs: [backend, frontend]          # wait for both builds
     runs-on: ubuntu-latest
     steps:
-      - name: Pull & restart stack on VM
+      - name: Deploy to VM
         uses: appleboy/ssh-action@v1
         with:
           host:     ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key:      ${{ secrets.VM_SSH_KEY }}
-        args:     "-o StrictHostKeyChecking=no"
-        script: |
+          args:     "-o StrictHostKeyChecking=no"
+          script: |
             set -e
             cd ~/fittrack-project
             git pull origin main
