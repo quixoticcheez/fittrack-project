@@ -41,12 +41,11 @@ jobs:
     needs: [backend, frontend]
     runs-on: ubuntu-latest
     steps:
-      # Add VM host key to known_hosts so SSH won’t prompt
       - name: Add VM host key
         run: |
+          mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
 
-      # Pull latest code and restart stack
       - name: Pull & restart stack on VM
         uses: appleboy/ssh-action@v1
         with:
