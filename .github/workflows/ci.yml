@@ -38,7 +38,7 @@ jobs:
   # ---------- Deploy to VM (only on main) ----------
   deploy:
     if: github.ref == 'refs/heads/main'
-    needs: [backend, frontend]          # wait for both builds
+    needs: [backend, frontend]
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to VM
@@ -47,7 +47,7 @@ jobs:
           host:     ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key:      ${{ secrets.VM_SSH_KEY }}
-          args:     "-o StrictHostKeyChecking=no"
+          port:     22                # default, but explicit is fine
           script: |
             set -e
             cd ~/fittrack-project
