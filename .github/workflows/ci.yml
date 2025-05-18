@@ -1,14 +1,32 @@
 name: CI
-on: [push, pull_request]
+
+on:
+  pull_request:
+    branches: [ main ]
 
 jobs:
+  # ---------- Back-end build ----------
   backend:
     runs-on: ubuntu-latest
+    defaults:
+      working-directory: backend
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: |
-          pip install fastapi uvicorn
-          python -c "print('CI stub OK')"
+      - run: pip install fastapi uvicorn
+      - run: echo "✅ backend build OK"
+
+  # ---------- Front-end build ----------
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run build
