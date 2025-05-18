@@ -39,19 +39,13 @@ jobs:
   deploy:
     if: github.ref == 'refs/heads/main'
     needs: [backend, frontend]
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, fittrack]   # must match a label
     steps:
-      - name: Deploy to VM
-        uses: appleboy/ssh-action@v1
-        with:
-          host:     ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key:      ${{ secrets.VM_SSH_KEY }}
-          port:     22                # default, but explicit is fine
-          script: |
-            set -e
-            cd ~/fittrack-project
-            git pull origin main
-            cd deploy
-            docker compose up -d --build
+      - name: Pull & restart stack
+        run: |
+          set -e
+          cd ~/fittrack-project
+          git pull origin main
+          cd deploy
+          docker compose up -d --build
 
