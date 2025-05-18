@@ -36,22 +36,18 @@ jobs:
       - run: npm run build
 
   # ---------- Deploy to VM (only on main) ----------
-  deploy:
+    deploy:
     if: github.ref == 'refs/heads/main'
     needs: [backend, frontend]
     runs-on: ubuntu-latest
     steps:
-      - name: Add VM host key
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.VM_HOST }} >> ~/.ssh/known_hosts
-
       - name: Pull & restart stack on VM
         uses: appleboy/ssh-action@v1
         with:
           host:     ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key:      ${{ secrets.VM_SSH_KEY }}
+          args:     "-o StrictHostKeyChecking=no"
           script: |
             set -e
             cd ~/fittrack-project
